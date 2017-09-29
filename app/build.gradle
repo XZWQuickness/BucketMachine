@@ -1,0 +1,78 @@
+apply plugin: 'com.android.application'
+apply plugin: 'org.greenrobot.greendao'
+android {
+    compileSdkVersion 26
+    buildToolsVersion "25.0.3"
+    defaultConfig {
+        applicationId "com.exz.steelfliggy"
+        minSdkVersion 19
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        multiDexEnabled true
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
+    /*针对greenDao的一些配置*/
+    greendao {
+        schemaVersion 1 //数据库版本号
+        daoPackage 'com.exz.steelfliggy.greendao.gen' //自动生成的工具类的包名
+        targetGenDir 'src/main/java' //路径
+    }
+}
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        def requested = details.requested
+        if (requested.group == 'com.android.support') {
+            if (!requested.name.startsWith("multidex")) {
+                details.useVersion '26.0.0-alpha1'
+            }
+        }
+    }
+}
+//导入智能更新 SDK 的 AAR 文件
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+dependencies {
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    //权限申请
+    //数据库
+    compile files('libs/jcore-android_v1.1.3.jar')
+    compile files('libs/jpush-android_v3.0.6.jar')
+    compile files('libs/alipaySingle-20170510.jar')
+    compile 'com.github.NW0LC:MyFramework:1.0.21'
+    compile 'com.jungly:gridPasswordView:0.3'
+    compile 'com.yanzhenjie:permission:latest.release'
+    compile 'org.greenrobot:greendao:3.1.0'
+    compile 'org.greenrobot:greendao-generator:3.1.0'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    //    compile 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
+    testCompile 'junit:junit:4.12'
+    compile files('libs/wechat-sdk-android-without-mta-1.3.4.jar')
+    compile files('libs/ShareSDK-Wechat-Core-3.0.1.jar')
+    compile files('libs/ShareSDK-QQ-3.0.1.jar')
+    compile files('libs/ShareSDK-Wechat-3.0.1.jar')
+    compile files('libs/MobTools-2017.0801.1522.jar')
+    compile files('libs/ShareSDK-Core-3.0.1.jar')
+    compile files('libs/MobCommons-2017.0801.1522.jar')
+    compile(name: 'autoupdatesdk-release', ext: 'aar')
+
+
+}
